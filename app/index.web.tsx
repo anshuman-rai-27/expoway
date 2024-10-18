@@ -62,7 +62,7 @@ const Login = () => {
           {isDesktop && (
             <View style={styles.imageContainer}>
               <ImageBackground
-                source={require('@/assets/images/lol.jpg')}
+                 source={{uri: 'https://anshuman.sirv.com/ethos/login.png'}}
                 style={styles.backgroundImage}
                 resizeMode="cover"
               >
