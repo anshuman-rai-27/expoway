@@ -16,7 +16,7 @@ const height = Dimensions.get("screen").height;
 
 type sessionVerificationNavigationProp = NativeStackNavigationProp<RootStackParamList, "SessionVerification">
 
-export const SessionVerification = ({ route }: { route: RouteProp<any> }) => {
+const SessionVerification = ({ route }: { route: RouteProp<any> }) => {
     const [intervalValue, setIntervalValue] = useState<number>(0);
     const [sessionId, setSessionId] = useState<Id<'sessions'>>();
     const createTempSession = useMutation(api.session.createTempSession);
@@ -122,3 +122,6 @@ export const SessionVerification = ({ route }: { route: RouteProp<any> }) => {
         </AuthComponent>
     );
 };
+
+
+export default SessionVerification;

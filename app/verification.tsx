@@ -11,20 +11,23 @@ import { encodeBase64 } from "tweetnacl-util";
 import { encryptSecretKey, generateKey, generateKeyPair } from "@/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
-import { useRouter } from "expo-router";
+// import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 const height = Dimensions.get('screen').height
 const width = Dimensions.get('screen').width
 
 type VerificationNavigationProp = NativeStackNavigationProp<RootStackParamList, "Verification">
 
-type VerificationRouteParams = {
-    email: string;
-    password: string;
-    type: "signIn" | "signUp"; // Define the type explicitly
-};
+// type VerificationRouteParams = {
+//     email: string;
+//     password: string;
+//     type: "signIn" | "signUp"; // Define the type explicitly
+// };
 
-export const Verification = ({ route }: { route: { params: VerificationRouteParams } }) => {
+const Verification = (
+    // { route }: { route: { params: VerificationRouteParams } }
+) => {
     const [code, setCode] = useState<string>("");
     const navigation = useNavigation<VerificationNavigationProp>()
     const { signIn } = useAuthActions();
@@ -33,13 +36,18 @@ export const Verification = ({ route }: { route: { params: VerificationRoutePara
     const setPublicKey = useMutation(api.users.setPublicKey);
     const checkVerificationCode = useMutation(api.users.checkVerificationCode)
     const createSession = useMutation(api.session.createSession);
+    const params = useLocalSearchParams();
     
+    const email = params.email as string;
+    const password = params.password as string;
+    const type = params.type as "signIn" | "signUp";
+
     async function handleSubmit() {
         // const email = route.params?.email
         // const password = route.params?.password
         // const type = route.params?.type
 
-        const { email, password, type } = route.params;
+        // const { email, password, type } = route.params;
 
         if(!(await checkVerificationCode({email:email, code:code, type:type}))){
             setErr('Error: Invalid Code');
@@ -118,3 +126,5 @@ export const Verification = ({ route }: { route: { params: VerificationRoutePara
         </AuthComponent>
     )
 }
+
+export default Verification;

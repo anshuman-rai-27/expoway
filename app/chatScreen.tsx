@@ -22,6 +22,9 @@ import { api } from '../convex/_generated/api';
 import { RootStackParamList } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Id } from '../convex/_generated/dataModel';
+import { useRouter, useLocalSearchParams } from "expo-router";
+const router = useRouter(); // Use router from Expo
+const { email } = useLocalSearchParams(); // Extract params from the route
 
 const { width, height } = Dimensions.get('window');
 

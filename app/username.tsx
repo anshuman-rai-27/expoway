@@ -12,7 +12,7 @@ import { useRouter, useLocalSearchParams } from "expo-router"; // Expo Router im
 const { height, width } = Dimensions.get('screen')
 
 
-export const Username = (
+const Username = (
     // { navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }
 ) => {
     const [username, setUsername] = useState<string>("");
@@ -86,11 +86,14 @@ export const Username = (
             },
             body:blob
         })
-        const {storageId} = await response.json()
-        const storageUrl = await getImage({storageId})
+        console.log(response,'response');
+        console.log(response.url,"responseurl");
+        // const {storageId} = await response.json()
+        // const storageUrl = await getImage({storageId})
+        // console.log(storageUrl,"storageurl");
         await updateUser({
             email:email as string,
-            imgUrl:storageUrl!,
+            imgUrl:response.url,
             name:username,
             phone:phone
         })
@@ -104,12 +107,13 @@ export const Username = (
         }
     }
     return (
-        <AuthComponent>
+        
             <View style={{
                 display: 'flex',
                 height: height,
                 justifyContent: 'center'
             }}>
+                <AuthComponent>
                 <Text style={{
                     paddingVertical: 10,
                     fontWeight: 900,
@@ -160,7 +164,10 @@ export const Username = (
                         fontSize: 16,
                     }}>Verify</Text>
                 </TouchableOpacity>
+                </AuthComponent>
             </View>
-        </AuthComponent>
+        
     )
 }
+
+export default Username;
