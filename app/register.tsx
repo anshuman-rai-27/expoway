@@ -36,7 +36,13 @@ const Register = () => {
       email:email,
       type:'signUp'
     })
-    navigation.navigate('Verification', {email,password, type:'signUp'})
+    // navigation.navigate('Verification', {email,password, type:'signUp'})
+    // Navigate to the Verification screen with params
+    router.push({
+      pathname: '/verification',
+      params: { email, password, type: 'signUp' }, // Use params object
+    });
+  
     
   };
 

@@ -18,7 +18,13 @@ const width = Dimensions.get('screen').width
 
 type VerificationNavigationProp = NativeStackNavigationProp<RootStackParamList, "Verification">
 
-export const verification = ({ route }: { route: RouteProp<any> }) => {
+type VerificationRouteParams = {
+    email: string;
+    password: string;
+    type: "signIn" | "signUp"; // Define the type explicitly
+};
+
+export const Verification = ({ route }: { route: { params: VerificationRouteParams } }) => {
     const [code, setCode] = useState<string>("");
     const navigation = useNavigation<VerificationNavigationProp>()
     const { signIn } = useAuthActions();
@@ -29,9 +35,12 @@ export const verification = ({ route }: { route: RouteProp<any> }) => {
     const createSession = useMutation(api.session.createSession);
     
     async function handleSubmit() {
-        const email = route.params?.email
-        const password = route.params?.password
-        const type = route.params?.type
+        // const email = route.params?.email
+        // const password = route.params?.password
+        // const type = route.params?.type
+
+        const { email, password, type } = route.params;
+
         if(!(await checkVerificationCode({email:email, code:code, type:type}))){
             setErr('Error: Invalid Code');
             return;
@@ -40,7 +49,11 @@ export const verification = ({ route }: { route: RouteProp<any> }) => {
             try {
                 await signIn("password", { email: email, password: password, flow: "signIn" })
                 await AsyncStorage.setItem('email', email);
-                navigation.navigate('SessionVerification', { email: email })
+                // navigation.navigate('SessionVerification', { email: email })
+                router.push({
+                    pathname: '/sessionVerification',
+                    params: { email }, // Use params object
+                  });
             } catch (error) {
                 console.error(error);
             }
@@ -57,7 +70,11 @@ export const verification = ({ route }: { route: RouteProp<any> }) => {
                 })
                 await AsyncStorage.setItem(email, JSON.stringify({sessionId:sessionId,privkey:secretKey}));
                 await setPublicKey({ email: email, publicKey: encodeBase64(userKeys.publicKey) });
-                navigation.navigate('Username', { email: email })
+                // navigation.navigate('Username', { email: email })
+                router.push({
+                    pathname: '/username',
+                    params: { email }, // Use params object
+                  });
             } catch (error) {
                 console.error(error);
             }
