@@ -745,7 +745,10 @@ const DmChatbox = (
             alignItems: 'center',
             gap: 18,
             justifyContent: 'space-between',
-            width: '15%'
+            width: '15%',
+            marginLeft:'870%',
+            marginTop:'10%',
+            marginBottom:'20%'
         }}>
             <TouchableOpacity
               style={{

@@ -42,23 +42,23 @@ const ChatScreen = (
   const removeFriend = useMutation(api.users.removeFriendShip)
   const router = useRouter();
   const { email } = useLocalSearchParams();
-  const [F,setF] = useState<string>(email as string)
-  useEffect(()=>{
-    setF(email as string)
-    if(!email){
-      AsyncStorage.getItem('email').then((response)=>{
-        setF(response as string)
-      })
-    }
-  },[email])
+  // const [F,setF] = useState<string>(email as string)
+  // useEffect(()=>{
+  //   setF(email as string)
+  //   if(!email){
+  //     AsyncStorage.getItem('email').then((response)=>{
+  //       setF(response as string)
+  //     })
+  //   }
+  // },[email])
   const friends = useQuery(api.users.getFriendShip, {
-    fromEmail:F
+    fromEmail:email as string
   })
   const user = useQuery(api.users.getUser,{
-    email:F
+    email:email as string
   })
   const group = useQuery(api.groups.getGroupWithEmail,{
-    email:F
+    email:email as string
   })
   
   const filteredChats = chats.filter((chat: any) =>
@@ -177,7 +177,7 @@ const ChatScreen = (
         <Text style={styles.greeting}>BloomChats</Text>
         <TouchableOpacity onPress={()=>{ 
           // navigation.navigate('Profile',{email:route.params!.email})
-          router.push({ pathname: '/userProfile', params: { F } });
+          router.push({ pathname: '/userProfile', params: { email } });
         }} >
           <Icon name="ellipsis-v" size={18} color="#fff"   />
         </TouchableOpacity>
@@ -223,7 +223,7 @@ const ChatScreen = (
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
           // navigation.navigate('GroupChatScreen',{email:route.params!.email})
-          router.push({ pathname: '/groupScreen', params: { F } });
+          router.push({ pathname: '/groupScreen', params: { email } });
           
         }}>
           <Icon name="users" size={20} color="#bbb" />
@@ -232,7 +232,7 @@ const ChatScreen = (
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
           // navigation.navigate('BillSplit',{email:route.params!.email})
-          router.push({ pathname: '/billSplit', params: { F } });
+          router.push({ pathname: '/billSplit', params: { email } });
         }}>
           <Icon name="money-bill-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Bill Split</Text>
