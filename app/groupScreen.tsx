@@ -216,16 +216,11 @@ const GroupChatScreen = (
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
-          router.push({ pathname: '/Calls', params: { email } });
+          router.push({ pathname: '/call', params: { email } });
         }}>
           <Icon name="phone-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Calls</Text>
         </TouchableOpacity>
-
-      
-
-       
-
       </View>
     </View>
   );
