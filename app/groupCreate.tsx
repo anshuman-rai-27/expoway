@@ -5,6 +5,7 @@ import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { api } from '../convex/_generated/api';
 import { useAction, useMutation, useQuery } from 'convex/react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -38,15 +39,19 @@ const sampleContacts = [
   },
 ];
 
-export default function GroupComponent({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) {
+export default function GroupComponent(
+  // { navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }
+) {
   const [groupName, setGroupName] = useState('');
   const [contacts, setContacts] = useState<any>(sampleContacts); // Sample contacts data
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]); // State for selected contacts
   const [image, setImage] = useState<any>();
   const [groupImage, setGroupImage] = useState<string>('https://via.placeholder.com/100'); // Default group image
   const [sampleUser, setSampleUser] = useState<any>([])
+  const router = useRouter(); // Using router from expo-router
+  const { email } = useLocalSearchParams();
   const user = useQuery(api.users.getUser, {
-    email: route.params!.email
+    email: email as string
   })
   const users = useQuery(api.users.getAllUser);
 
@@ -146,7 +151,7 @@ export default function GroupComponent({ navigation, route }: { navigation: Navi
         groupImage = await getImage({ storageId }) ?? groupImage
       }
       const group = await createGroup({
-        email: route.params!.email,
+        email: email as string,
         name: groupName,
         description: "",
         imgUrl: groupImage,
@@ -158,7 +163,8 @@ export default function GroupComponent({ navigation, route }: { navigation: Navi
           email: selectedContacts[i].email
         })
       }
-      navigation.navigate('GroupChat', { email: route.params!.email, groupId: group.data?.groupId })
+      // navigation.navigate('GroupChat', { email: route.params!.email, groupId: group.data?.groupId })
+      router.push({ pathname: '/groupChat', params: { groupId: group.data?.groupId, email: email } });
     } catch (error) {
       console.error(error);
     }

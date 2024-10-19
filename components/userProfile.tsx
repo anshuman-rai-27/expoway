@@ -13,22 +13,27 @@ import { launchImageLibrary, ImagePickerResponse, ImageLibraryOptions } from 're
 import { api } from '../convex/_generated/api';
 import { useAction, useMutation, useQuery } from 'convex/react';
 import { RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 interface User {
   name: string;
   dp?: string; 
 }
 
-function UserProfileComponent({route}:{route:RouteProp<any>}){
+function UserProfileComponent(
+  // {route}:{route:RouteProp<any>}
+){
   const [username, setUsername] = useState<string>("");
   const [image, setImage] = useState<any>();
   const [userImage, setUserImage] = useState<string>('https://via.placeholder.com/100');
+  const router = useRouter();
+  const { email } = useLocalSearchParams();
 
   const getImage = useAction(api.message.getUrluploadFile)
   const uploadImage = useAction(api.message.getUploadUrl)
   const updateUser = useMutation(api.users.updateUser)
   const user = useQuery(api.users.getUser,{
-    email:route.params!.email
+    email:email as string
   })
 
   useEffect(()=>{
@@ -38,7 +43,7 @@ function UserProfileComponent({route}:{route:RouteProp<any>}){
   const handleUpdateProfile = async () => {
     if(!image){
       await updateUser({
-        email:route.params!.email,
+        email:email as string,
         name:username
       })
       Alert.alert('Successfully updated your details');
@@ -60,7 +65,7 @@ function UserProfileComponent({route}:{route:RouteProp<any>}){
         const {storageId} = await response.json()
         const storageUrl = await getImage({storageId})
         await updateUser({
-          email:route.params!.email,
+          email:email as string,
           imgUrl:storageUrl!,
           name:username ?? user?.name
         })

@@ -21,6 +21,7 @@ import { decodeBase64 } from 'tweetnacl-util';
 import { decryptSecretKey, encrypt } from '../utils';
 import { Id } from '../convex/_generated/dataModel';
 import { box } from "tweetnacl";
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 const ITEM_HEIGHT = 380; // Height for each list item
@@ -30,11 +31,15 @@ interface Amounts {
   [key: string]: number;
 }
 
-const BillSplit = ({ route }: { route: RouteProp<any> }) => {
+const BillSplit = (
+  // { route }: { route: RouteProp<any> }
+) => {
   const defaultUserIcon = 'https://via.placeholder.com/100';
   const contacts = useQuery(api.users.getAllUserWithPublicKey)
+  const router = useRouter(); // Using router from expo-router
+  const { email } = useLocalSearchParams();
   const user = useQuery(api.users.getUser, {
-    email: route.params!.email
+    email: email as string
   })
   const sessions = useQuery(api.session.getSession, {
     userId: user?._id
