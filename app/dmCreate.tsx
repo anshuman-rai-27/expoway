@@ -52,6 +52,7 @@ export default function GroupComponent(
   const [sampleUser, setSampleUser] = useState<any>([])
   const router = useRouter(); // Using router from expo-router
   const { email } = useLocalSearchParams();
+  console.log(email,"email");
   const user = useQuery(api.users.getUser, {
     email: email as string
   })

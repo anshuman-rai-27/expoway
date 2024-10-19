@@ -22,6 +22,7 @@ type loginScreenProp = NativeStackNavigationProp<RootStackParamList, "Login">
 const Login = () => {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const router = useRouter();
+  const [email, setEmail] = useState('');
 
   const navigation = useNavigation<loginScreenProp>();
   if (isAuthenticated) {
@@ -31,7 +32,9 @@ const Login = () => {
   async function directChat() {
     const localEmail = await AsyncStorage.getItem('email');
     console.log(localEmail)
+    
     if (localEmail) {
+      setEmail(localEmail);
       router.push({
         pathname: '/chatScreen',
         params: { email }, // Use params object
@@ -39,7 +42,7 @@ const Login = () => {
       // navigation.navigate('Chat', { email: localEmail });
     }
   }
-  const [email, setEmail] = useState('');
+  
   const [password, setPassword] = useState('');
   const createVerificationCode = useAction(api.users.sendEmail);
   const handleLogin = async () => {
