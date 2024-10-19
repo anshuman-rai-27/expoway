@@ -486,9 +486,10 @@ import { box } from "tweetnacl";
 import { decrypt, decryptSecretKey, encrypt } from '../utils';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Id } from '@/convex/_generated/dataModel';
+import Chatbox from './groupChat';
 
 const themes = [
   { id: 1, name: 'Orange Theme', backgroundImage: require('../assets/images/chat1.jpg'), myBubble: '#DD651B', theirBubble: '#333' },
@@ -506,7 +507,7 @@ const messageExpiry = [
 
 type groupChatScreenProp = NativeStackNavigationProp<RootStackParamList, "GroupChat">;
 
-export const DmChatbox = (
+const DmChatbox = (
   // { route }: { route: RouteProp<any> }
 ) => {
   const navigation = useNavigation<groupChatScreenProp>()
@@ -514,7 +515,7 @@ export const DmChatbox = (
   // const fromId = route.params!.fromId
   // const toId = route.params!.toId
   const router = useRouter();
-  const { fromId, toId } = useLocalSearchParams(); // Get params from expo-router
+  const { fromId, toId ,email} = useLocalSearchParams(); // Get params from expo-router
   const fromUserId = fromId as Id<"users">;
   const toUserId = toId as Id<"users">;
 
@@ -674,19 +675,19 @@ export const DmChatbox = (
   }
 
   const handleFileUpload = async () => {
-    try {
-      const file = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
-      });
-      setFile(file[0])
-      Alert.alert('File selected', file[0].name!);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled the file picker');
-      } else {
-        console.error('Error:', err);
-      }
-    }
+    // try {
+    //   const file = await DocumentPicker.pick({
+    //     type: [DocumentPicker.types.allFiles],
+    //   });
+    //   setFile(file[0])
+    //   Alert.alert('File selected', file[0].name!);
+    // } catch (err) {
+    //   if (DocumentPicker.isCancel(err)) {
+    //     console.log('User cancelled the file picker');
+    //   } else {
+    //     console.error('Error:', err);
+    //   }
+    // }
   };
 
   const createCallLog = async () => {
@@ -721,7 +722,8 @@ export const DmChatbox = (
         }}>
              <View style={styles.header}>
           <TouchableOpacity onPress={() => {
-            navigation.navigate('Chat', { email: fromUser?.email! });
+            // navigation.navigate('Chat', { email: fromUser?.email! });
+            router.push({ pathname: '/chatScreen', params: {email: email as string } });
           }} style={styles.backButton}>
             <Icon
               name="angle-left"
@@ -1070,3 +1072,4 @@ const styles = StyleSheet.create({
   },
 });
 
+export default DmChatbox;

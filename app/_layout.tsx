@@ -40,12 +40,12 @@ export default function RootLayout() {
           <Stack.Screen name="OtherDevices" /> */}
           <Stack.Screen name="sessionVerification" />
           <Stack.Screen name="chatScreen"  />
-          {/* <Stack.Screen name="dm"  />
+          <Stack.Screen name="dm"  />
           <Stack.Screen name="dmCreate" />
-          <Stack.Screen name="chatbox" />
-          <Stack.Screen name="Profile"  />
+          {/* <Stack.Screen name="chatbox" /> */}
+          <Stack.Screen name="userProfile"  />
           <Stack.Screen name="call" />
-          <Stack.Screen name="BillSplit" /> */}
+          <Stack.Screen name="billSplit" />
         </Stack>
       </ConvexAuthProvider>
   );
