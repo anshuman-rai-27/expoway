@@ -24,12 +24,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Id } from '../convex/_generated/dataModel';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
-import Chatbox from './groupChat';
+import Chatbox from '../app/groupChat';
 const { width, height } = Dimensions.get('window');
 
 type chatScreenProp = NativeStackNavigationProp<RootStackParamList, "Chat">
 
-const GroupChatScreen = (
+const GroupChatScreenComponent = (
   // { route }: { route: RouteProp<any> }
 ) => {
   const [chats, setChats] = useState<any[]>([]);
@@ -157,8 +157,7 @@ const GroupChatScreen = (
   );
 
   return (
-    <View style={styles.containerbox}>
-    <View style={styles.mainbox}>
+  
     
     
 
@@ -236,15 +235,10 @@ const GroupChatScreen = (
 
           </View>
           </View>
-        </View>
-      <View style={styles.leftbox}>
-      
-        <Chatbox/>
-  
+       
+   
 
- </View>
-
-      </View>
+     
   );
 };
 
@@ -255,27 +249,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Platform.OS === 'android' ? 40 : 20,
   },
-  containerbox: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  mainbox: {
-    flex: 0.3,
-    width: '30%',
-    height: '100%',
-  },
-  leftbox: {
-    flex: 0.7,
-    width: '150%',
-    height: '100%',
-    borderRadius: 10,
-  
-  },
+
   
   navIcons: {
     fontSize: 12,
     fontWeight: '800',
-    color:'#bbb',
   },
   
   header: {
@@ -376,4 +354,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupChatScreen;
+export default GroupChatScreenComponent;
