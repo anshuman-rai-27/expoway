@@ -5,6 +5,7 @@ import { api } from '../convex/_generated/api';
 import {  useQuery } from 'convex/react';
 import { RootStackParamList } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,15 +41,19 @@ const sampleContacts = [
 
 type dmGroupNavigation = NativeStackNavigationProp<RootStackParamList, "DmCreate">
 
-export default function GroupComponent({route }: {  route: RouteProp<any> }) {
+export default function GroupComponent(
+  // {route }: {  route: RouteProp<any> }
+) {
   const [groupName, setGroupName] = useState('');
   const navigation = useNavigation<dmGroupNavigation>();
   const [contacts, setContacts] = useState<any>(sampleContacts); 
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]); 
   const [image, setImage] = useState<any>();
   const [sampleUser, setSampleUser] = useState<any>([])
+  const router = useRouter(); // Using router from expo-router
+  const { email } = useLocalSearchParams();
   const user = useQuery(api.users.getUser, {
-    email: route.params!.email
+    email: email as string
   })
   const users = useQuery(api.users.getAllUser);
 
@@ -76,7 +81,8 @@ export default function GroupComponent({route }: {  route: RouteProp<any> }) {
 
   // Handle contact selection
   const handleSelectContact = (contact: any) => {
-    navigation.navigate('DmChat', {fromId:user!._id, toId:contact._id}) // Remove the selected contact from the contacts list
+    // navigation.navigate('DmChat', {fromId:user!._id, toId:contact._id}) // Remove the selected contact from the contacts list
+    router.push({ pathname: '/dm', params: { toId: contact._id, fromId: user?._id! } });
   };
 
   // Handle removing selected contact
@@ -104,7 +110,8 @@ export default function GroupComponent({route }: {  route: RouteProp<any> }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <TouchableOpacity onPress={()=>{
-        navigation.navigate('GroupCreate', {email:route.params?.email})
+        // navigation.navigate('GroupCreate', {email:email as string})
+        router.push({ pathname: '/GroupCreate', params: {email:email as string} });
       }}>
         <Text style={styles.title}>+ Create Group</Text>
       </TouchableOpacity>
