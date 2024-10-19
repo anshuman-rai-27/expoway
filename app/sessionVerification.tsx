@@ -11,24 +11,31 @@ import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { encodeBase64 } from "tweetnacl-util";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 const height = Dimensions.get("screen").height;
 
 type sessionVerificationNavigationProp = NativeStackNavigationProp<RootStackParamList, "SessionVerification">
 
-const SessionVerification = ({ route }: { route: RouteProp<any> }) => {
+const SessionVerification = (
+    // { route }: { route: RouteProp<any> }
+) => {
     const [intervalValue, setIntervalValue] = useState<number>(0);
     const [sessionId, setSessionId] = useState<Id<'sessions'>>();
     const createTempSession = useMutation(api.session.createTempSession);
     const updateTempSession = useMutation(api.session.updateTempSession)
+    const router = useRouter();
+    const params = useLocalSearchParams();
+    const email = params?.email as string;
     const session = useQuery(api.session.getSessionById, {
         sessionId: sessionId
     })
     const user = useQuery(api.users.getUser, {
-        email: route.params?.email
+        email: email
     })
-    const storage = useAsyncStorage(route.params!.email);
+    const storage = useAsyncStorage(email);
     const intervalRef = useRef<any>();
+    
     
     const navigation = useNavigation<sessionVerificationNavigationProp>()
 
@@ -57,7 +64,9 @@ const SessionVerification = ({ route }: { route: RouteProp<any> }) => {
     useEffect(() => {
         if (session?.type === "PERMANENT") {
             clearInterval(intervalRef.current);
-            navigation.navigate('Chat', { email: route.params?.email })
+
+            // navigation.navigate('Chat', { email: email });
+            router.push({pathname: "/chatScreen", params: { email: email as string }});
         }
     }, [session])
     async function createTempSessionFunction() {

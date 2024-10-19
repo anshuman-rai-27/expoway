@@ -23,30 +23,33 @@ import { RootStackParamList } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Id } from '../convex/_generated/dataModel';
 import { useRouter, useLocalSearchParams } from "expo-router";
-const router = useRouter(); // Use router from Expo
-const { email } = useLocalSearchParams(); // Extract params from the route
 
 const { width, height } = Dimensions.get('window');
 
 type chatScreenProp = NativeStackNavigationProp<RootStackParamList, "Chat">
 
-const ChatScreen = ({ route }: { route: RouteProp<any> }) => {
+const ChatScreen = (
+  // { route }: { route: RouteProp<any> }
+) => {
   const [chats, setChats] = useState<any[]>([]);
   const [friendChat, setFriendChat] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation<chatScreenProp>();
   const removeFriend = useMutation(api.users.removeFriendShip)
+
+  const router = useRouter();
+  const { email } = useLocalSearchParams();
   
   
   
   const friends = useQuery(api.users.getFriendShip, {
-    fromEmail:route.params!.email
+    fromEmail:email as string
   })
   const user = useQuery(api.users.getUser,{
-    email:route.params!.email
+    email:email as string
   })
   const group = useQuery(api.groups.getGroupWithEmail,{
-    email:route.params!.email
+    email:email as string
   })
   
   const filteredChats = chats.filter((chat: any) =>
@@ -105,7 +108,7 @@ const ChatScreen = ({ route }: { route: RouteProp<any> }) => {
       }),
     ]).start();
 
-    navigation.navigate('DmCreate',{email:route.params?.email})
+    router.push({ pathname: '/dmCreate', params: { email } });
   };
 
   // Animation for bottom navigation
@@ -129,7 +132,8 @@ const ChatScreen = ({ route }: { route: RouteProp<any> }) => {
     <TouchableOpacity
       onLongPress={() => handleLongPress(item._id)}
       onPress={() => {
-        navigation.navigate('GroupChat', { groupId: item._id, email: route.params?.email });
+        // navigation.navigate('GroupChat', { groupId: item._id, email: route.params?.email });
+        router.push({ pathname: '/groupChat', params: { groupId: item._id, email } });
       }}
       style={styles.chatItem}
     >
@@ -143,7 +147,8 @@ const ChatScreen = ({ route }: { route: RouteProp<any> }) => {
     <TouchableOpacity
       onLongPress={() => handleFriendLongPress(item._id)}
       onPress={() => {
-        navigation.navigate('DmChat', { toId: item._id, fromId:user?._id! });
+        // navigation.navigate('DmChat', { toId: item._id, fromId:user?._id! });
+        router.push({ pathname: '/DmChat', params: { toId: item._id, fromId: user?._id! } });
       }}
       style={styles.chatItem}
     >
@@ -207,13 +212,15 @@ const ChatScreen = ({ route }: { route: RouteProp<any> }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
-          navigation.navigate('Profile',{email:route.params!.email})
+          // navigation.navigate('Profile',{email:route.params!.email})
+          router.push({ pathname: '/Profile', params: { email } });
         }}>
           <Icon name="user" size={20} color="#bbb" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
-          navigation.navigate('BillSplit',{email:route.params!.email})
+          // navigation.navigate('BillSplit',{email:route.params!.email})
+          router.push({ pathname: '/BillSplit', params: { email } });
         }}>
           <Icon name="money-bill-alt" size={20} color="#bbb" />
         </TouchableOpacity>

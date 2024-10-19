@@ -30,9 +30,13 @@ const Login = () => {
 
   async function directChat() {
     const localEmail = await AsyncStorage.getItem('email');
-
+    console.log(localEmail)
     if (localEmail) {
-      navigation.navigate('Chat', { email: localEmail });
+      router.push({
+        pathname: '/chatScreen',
+        params: { email }, // Use params object
+      });
+      // navigation.navigate('Chat', { email: localEmail });
     }
   }
   const [email, setEmail] = useState('');
@@ -43,7 +47,11 @@ const Login = () => {
       email: email,
       type: 'signIn'
     })
-    navigation.navigate('Verification', { email: email, password: password, type: 'signIn' });
+    // navigation.navigate('Verification', { email: email, password: password, type: 'signIn' });
+    router.push({
+      pathname: '/verification',
+      params: { email, password, type: 'signIn' }, // Use params object
+    });
   };
 
   return (

@@ -37,10 +37,10 @@ const Verification = (
     const checkVerificationCode = useMutation(api.users.checkVerificationCode)
     const createSession = useMutation(api.session.createSession);
     const params = useLocalSearchParams();
-    
-    const email = params.email as string;
-    const password = params.password as string;
-    const type = params.type as "signIn" | "signUp";
+    // console.log(params);
+    const email = params?.email as string;
+    const password = params?.password as string;
+    const type = params?.type as "signIn" | "signUp";
 
     async function handleSubmit() {
         // const email = route.params?.email
