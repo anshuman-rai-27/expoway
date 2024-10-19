@@ -1,4 +1,6 @@
-import { secretbox, box, randomBytes } from 'tweetnacl';
+import nacl, { secretbox, box, randomBytes, setPRNG } from 'tweetnacl';
+import {getRandomBytes} from "expo-crypto";
+
 import {
   decode as decodeUTF8,
   encode as encodeUTF8,
@@ -7,6 +9,14 @@ import {
   decode as decodeBase64,
   encode as encodeBase64,
 } from "@stablelib/base64";
+
+
+setPRNG((x, n) => {
+  const randomBytes = getRandomBytes(n);
+  for (let i = 0; i < n; i++) {
+    x[i] = randomBytes[i];
+  }
+});
 
 const newNonce = () => randomBytes(box.nonceLength);
 export const generateKeyPair = () => box.keyPair();
@@ -87,4 +97,36 @@ export const decrypt = (
 
   const base64DecryptedMessage = decodeUTF8(decrypted);
   return JSON.parse(base64DecryptedMessage);
+};
+
+
+
+export const encryptBinary = (secretOrSharedKey:any, binaryData:any, key:any) => {
+  const nonce = newNonce();
+  const encrypted = key
+    ? nacl.box(binaryData, nonce, key, secretOrSharedKey)
+    : nacl.box.after(binaryData, nonce, secretOrSharedKey);
+
+  // Combine nonce and encrypted message
+  const fullMessage = new Uint8Array(nonce.length + encrypted.length);
+  fullMessage.set(nonce);
+  fullMessage.set(encrypted, nonce.length);
+
+  // Encode to base64 for easier storage and transfer
+  return encodeBase64(fullMessage);
+};
+export const decryptBinary = (secretOrSharedKey:any, encryptedMessage:any, key:any) => {
+  const messageWithNonceAsUint8Array = decodeBase64(encryptedMessage);
+  const nonce = messageWithNonceAsUint8Array.slice(0, nacl.box.nonceLength);
+  const message = messageWithNonceAsUint8Array.slice(nacl.box.nonceLength);
+
+  const decrypted = key
+    ? nacl.box.open(message, nonce, key, secretOrSharedKey)
+    : nacl.box.open.after(message, nonce, secretOrSharedKey);
+
+  if (!decrypted) {
+    throw new Error("Could not decrypt binary data");
+  }
+
+  return decrypted; // Return decrypted binary data
 };

@@ -696,7 +696,7 @@ const DmChatbox = (
       to: toUser?._id!
     })
     // navigation.navigate('DmCallPage', { fromId: fromId, name: fromUser?.name!, email: fromUser?.email!, toId: toId, callId: id })
-    router.push({ pathname: '/callDm', params: { fromId: fromUserId, name: fromUser?.name!, email: fromUser?.email!, toId: toUserId, callId: id } });
+    // router.push({ pathname: '/callDm', params: { fromId: fromUserId, name: fromUser?.name!, email: fromUser?.email!, toId: toUserId, callId: id } });
   }
   const handleExpiry = async () => {
     setExpire(!expire)

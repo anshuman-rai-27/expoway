@@ -554,7 +554,7 @@ const ChatScreen = (
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
           // navigation.navigate('Calls',{email:route.params!.email})
-          router.push({ pathname: '/call', params: { email } });
+          // router.push({ pathname: '/Calls', params: { email } });
         }}>
           <Icon name="phone-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Calls</Text>

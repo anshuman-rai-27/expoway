@@ -5,21 +5,21 @@ import { Id } from "./_generated/dataModel";
 
 
 export const getMessageByGroupId = query({
-    args:{groupId:v.id("groups")},
-    handler: async(ctx, args)=>{
-        return await ctx.db.query('messages').filter((q)=>q.eq(q.field('groupId'), args.groupId)).collect();
+    args: { groupId: v.id("groups") },
+    handler: async (ctx, args) => {
+        return await ctx.db.query('messages').filter((q) => q.eq(q.field('groupId'), args.groupId)).collect();
 
     }
 })
 
 export const getDmMessage = query(
     {
-        args:{fromUser:v.id("users"), toUser:v.id("users")},
-        handler:async (ctx,args)=>{
+        args: { fromUser: v.id("users"), toUser: v.id("users") },
+        handler: async (ctx, args) => {
             // from=id1&to=id2 || from=id2&to=id1
-            const dm = await ctx.db.query('dm').filter((q)=>q.or(
+            const dm = await ctx.db.query('dm').filter((q) => q.or(
                 q.and(
-                    q.eq(q.field('from'), args.fromUser), 
+                    q.eq(q.field('from'), args.fromUser),
                     q.eq(q.field('to'), args.toUser)
                 ),
                 q.and(
@@ -34,31 +34,72 @@ export const getDmMessage = query(
 
 
 export const createDmMessage = mutation({
-    args:{fromUser:v.id('users'), toUser:v.id('users'), content:v.string(), isExpiry:v.optional(v.boolean()), isOneTime:v.optional(v.boolean())},
-    handler:async (ctx,args) =>{
-        await ctx.db.insert('dm',{
-            from:args.fromUser,
-            to:args.toUser,
-            content:args.content,
-            isEdited:false,
-            isExpiry:args.isExpiry,
-            isOneTime:args.isOneTime,
-            seen:false,
+    args: {
+        fromUser: v.id('users'),
+        toUser: v.id('users'),
+        content: v.string(),
+        isExpiry: v.optional(v.boolean()),
+        isOneTime: v.optional(v.boolean()),
+        time: v.optional(v.number()),
+        type: v.optional(v.union(v.literal('FILE'), v.literal('MESSAGE'))),
+        fileUrl:v.optional(v.string()),
+        fileType:v.optional(v.string()),
+        fileName:v.optional(v.string())
+    },
+    handler: async (ctx, args) => {
+        const messageContent = `${args.content}`
+        const messageId = await ctx.db.insert('dm', {
+            from: args.fromUser,
+            to: args.toUser,
+            content: messageContent,
+            isEdited: false,
+            isExpiry: args.isExpiry,
+            isOneTime: args.isOneTime,
+            seen: false,
+            fileUrl:args.fileUrl,
+            type: args.type
         })
+        if (args.isExpiry && args.time) {
+            await ctx.scheduler.runAfter(args.time, internal.message.markExpiryDmMessage, {
+                messageId
+            })
+        }
     }
 
 })
 
+
+export const markExpiryDmMessage = internalMutation({
+    args: { messageId: v.id('dm') },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.messageId, {
+            content: "This message is Expired"
+        })
+    }
+})
+export const markExpiryMessage = internalMutation({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, args) => {
+        console.log('messageId', args.messageId)
+        await ctx.db.patch(args.messageId, {
+            content: "This message is Expired"
+        })
+    }
+})
+
+
+
+
 export const getUploadUrl = action({
-    args:{},
-    handler:async (ctx,args)=>{
+    args: {},
+    handler: async (ctx, args) => {
         return await ctx.storage.generateUploadUrl()
     }
 })
 
 export const getUrluploadFile = action({
-    args:{storageId:v.id('_storage')},
-    handler:async (ctx,args)=>{
+    args: { storageId: v.id('_storage') },
+    handler: async (ctx, args) => {
         const storageUrl = await ctx.storage.getUrl(args.storageId as Id<'_storage'>)
         console.log(storageUrl)
         return storageUrl;
@@ -66,42 +107,32 @@ export const getUrluploadFile = action({
 })
 
 export const createMessage = mutation({
-    args:{content:v.string(), groupId:v.id('groups'), from:v.id('users'), isExpiry:v.optional(v.boolean()), isOneTime:v.optional(v.boolean())},
-    handler:async (ctx,args)=>{
+    args: { content: v.string(), groupId: v.id('groups'), from: v.id('users'), isExpiry: v.optional(v.boolean()), isOneTime: v.optional(v.boolean()) },
+    handler: async (ctx, args) => {
         const messageId = await ctx.db.insert('messages', {
-            from:args.from,
-            content:args.content,
-            groupId:args.groupId,
-            seen:false,
-            isExpiry:args.isExpiry,
-            isOneTime:args.isOneTime,
-            isEdited:false
+            from: args.from,
+            content: args.content,
+            groupId: args.groupId,
+            seen: false,
+            isExpiry: args.isExpiry,
+            isOneTime: args.isOneTime,
+            isEdited: false
         })
-        if(args.isExpiry){
-            await ctx.scheduler.runAfter(5000,internal.message.markExpiryMessage, {
+        if (args.isExpiry) {
+            await ctx.scheduler.runAfter(5000, internal.message.markExpiryMessage, {
                 messageId
             })
         }
-        
+
     }
 })
 
 export const editMessage = mutation({
-    args:{messageId:v.id('messages'), content:v.string()},
-    handler: async (ctx,args)=>{
+    args: { messageId: v.id('messages'), content: v.string() },
+    handler: async (ctx, args) => {
         await ctx.db.patch(args.messageId, {
-            isEdited:true,
-            content:args.content
-        })
-    }
-})
-
-export const markExpiryMessage = internalMutation({
-    args:{messageId:v.id('messages')},
-    handler:async (ctx, args) =>{
-        console.log('messageId',args.messageId)
-        await ctx.db.patch(args.messageId, {
-            content:"This message is Expired"
+            isEdited: true,
+            content: args.content
         })
     }
 })
