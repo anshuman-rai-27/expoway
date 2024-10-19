@@ -111,7 +111,8 @@ const Chatbox = (
         {/* Header Section */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => {
-            navigation.navigate('Chat', { email: email as string });
+            // navigation.navigate('Chat', { email: email as string });
+            router.push({ pathname: '/chatScreen', params: { email: email as string } });
           }} style={styles.backButton}>
             <Icon
               name="angle-left"

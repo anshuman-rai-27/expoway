@@ -492,11 +492,11 @@ import { Id } from '@/convex/_generated/dataModel';
 import Chatbox from './groupChat';
 
 const themes = [
-  { id: 1, name: 'Orange Theme', backgroundImage: require('../assets/images/chat1.jpg'), myBubble: '#DD651B', theirBubble: '#333' },
-  { id: 2, name: 'Violet Theme', backgroundImage: require('../assets/images/chat_violet.jpg'), myBubble: '#6A0DAD', theirBubble: '#333' },
-  { id: 3, name: 'Minimal Theme', backgroundImage: require('../assets/images/chat_white.jpg'), myBubble: '#333', theirBubble: '#000000' },
-  { id: 4, name: 'Yellow Theme', backgroundImage: require('../assets/images/chat_yellow.jpg'), myBubble: '#EAB613', theirBubble: '#333' },
-  { id: 5, name: 'Pink Theme', backgroundImage: require('../assets/images/chat_pink.jpg'), myBubble: '#DA70A5', theirBubble: '#333' },
+  { id: 1, name: 'Orange Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat1.jpg'}, myBubble: '#DD651B', theirBubble: '#333' },
+  { id: 2, name: 'Violet Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_violet.jpg'}, myBubble: '#6A0DAD', theirBubble: '#333' },
+  { id: 3, name: 'Minimal Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_white.jpg'}, myBubble: '#333', theirBubble: '#000000' },
+  { id: 4, name: 'Yellow Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_yellow.jpg'}, myBubble: '#EAB613', theirBubble: '#333' },
+  { id: 5, name: 'Pink Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_pink.jpg'}, myBubble: '#DA70A5', theirBubble: '#333' },
 ];
 
 const messageExpiry = [

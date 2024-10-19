@@ -24,6 +24,7 @@ import { RootStackParamList } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Id } from '../convex/_generated/dataModel';
 import { useRouter, useLocalSearchParams } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -41,15 +42,23 @@ const ChatScreen = (
   const removeFriend = useMutation(api.users.removeFriendShip)
   const router = useRouter();
   const { email } = useLocalSearchParams();
-  
+  const [F,setF] = useState<string>(email as string)
+  useEffect(()=>{
+    setF(email as string)
+    if(!email){
+      AsyncStorage.getItem('email').then((response)=>{
+        setF(response as string)
+      })
+    }
+  },[email])
   const friends = useQuery(api.users.getFriendShip, {
-    fromEmail:email as string
+    fromEmail:F
   })
   const user = useQuery(api.users.getUser,{
-    email:email as string
+    email:F
   })
   const group = useQuery(api.groups.getGroupWithEmail,{
-    email:email as string
+    email:F
   })
   
   const filteredChats = chats.filter((chat: any) =>
@@ -168,7 +177,7 @@ const ChatScreen = (
         <Text style={styles.greeting}>BloomChats</Text>
         <TouchableOpacity onPress={()=>{ 
           // navigation.navigate('Profile',{email:route.params!.email})
-          router.push({ pathname: '/userProfile', params: { email } });
+          router.push({ pathname: '/userProfile', params: { F } });
         }} >
           <Icon name="ellipsis-v" size={18} color="#fff"   />
         </TouchableOpacity>
@@ -205,12 +214,6 @@ const ChatScreen = (
       <TouchableOpacity style={styles.fab} onPress={handleAddButtonPress}>
         <Icon name="plus" size={20} color="#fff" />
       </TouchableOpacity>
-      
-      
-    
-      
-        
-
       {/* Bottom Navbar */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
@@ -220,7 +223,7 @@ const ChatScreen = (
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
           // navigation.navigate('GroupChatScreen',{email:route.params!.email})
-          router.push({ pathname: '/groupScreen', params: { email } });
+          router.push({ pathname: '/groupScreen', params: { F } });
           
         }}>
           <Icon name="users" size={20} color="#bbb" />
@@ -229,7 +232,7 @@ const ChatScreen = (
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
           // navigation.navigate('BillSplit',{email:route.params!.email})
-          router.push({ pathname: '/billSplit', params: { email } });
+          router.push({ pathname: '/billSplit', params: { F } });
         }}>
           <Icon name="money-bill-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Bill Split</Text>

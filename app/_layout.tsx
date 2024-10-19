@@ -44,8 +44,10 @@ export default function RootLayout() {
           <Stack.Screen name="dmCreate" />
           {/* <Stack.Screen name="chatbox" /> */}
           <Stack.Screen name="userProfile"  />
-          <Stack.Screen name="call" />
+          {/* <Stack.Screen name="call" />
+          <Stack.Screen name="callDm" /> */}
           <Stack.Screen name="billSplit" />
+          <Stack.Screen name="chatbot" />
         </Stack>
       </ConvexAuthProvider>
   );

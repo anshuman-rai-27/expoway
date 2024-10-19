@@ -32,11 +32,11 @@ import Chatbox from './groupChat';
 import ChatScreen from './chatScreen';
 
 const themes = [
-  { id: 1, name: 'Orange Theme', backgroundImage: require('../assets/images/chat1.jpg'), myBubble: '#DD651B', theirBubble: '#333' },
-  { id: 2, name: 'Violet Theme', backgroundImage: require('../assets/images/chat_violet.jpg'), myBubble: '#6A0DAD', theirBubble: '#333' },
-  { id: 3, name: 'Minimal Theme', backgroundImage: require('../assets/images/chat_white.jpg'), myBubble: '#333', theirBubble: '#000000' },
-  { id: 4, name: 'Yellow Theme', backgroundImage: require('../assets/images/chat_yellow.jpg'), myBubble: '#EAB613', theirBubble: '#333' },
-  { id: 5, name: 'Pink Theme', backgroundImage: require('../assets/images/chat_pink.jpg'), myBubble: '#DA70A5', theirBubble: '#333' },
+  { id: 1, name: 'Orange Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat1.jpg'}, myBubble: '#DD651B', theirBubble: '#333' },
+  { id: 2, name: 'Violet Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_violet.jpg'}, myBubble: '#6A0DAD', theirBubble: '#333' },
+  { id: 3, name: 'Minimal Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_white.jpg'}, myBubble: '#333', theirBubble: '#000000' },
+  { id: 4, name: 'Yellow Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_yellow.jpg'}, myBubble: '#EAB613', theirBubble: '#333' },
+  { id: 5, name: 'Pink Theme', backgroundImage: {uri: 'https://anshuman.sirv.com/ethos/chat_pink.jpg'}, myBubble: '#DA70A5', theirBubble: '#333' },
 ];
 
 const messageExpiry = [
@@ -82,6 +82,8 @@ const DmChatbox = (
   const [sharedKey, setSharedKey] = useState<Uint8Array>();
   const [expire, setExpire] = useState<boolean>(false);
   const [friend, setFriend] = useState<boolean>(false);
+  console.log(fromUser);
+  console.log(sessions,"session");
 
   useEffect(() => {
     const initializePrivateKeyAndSharedKey = async () => {
@@ -163,7 +165,24 @@ const DmChatbox = (
     await createFriendship({ from: fromUser?._id!, to: toUser?._id! })
     setFriend(true);
   }
-
+  const sendMessageWithOutInput = async (messageText:string) => {
+    if (!friend) {
+      await checkFriendShip();
+    }
+    if (sharedKey && message.trim()) {
+      const todayDate = new Date().getTime()
+      const messageContent = `${messageText.trim()}${expire ? ` (expires at ${new Date(todayDate + expiryTime).toLocaleString()})` : ' '}`
+      await create({
+        toUser: toUser!._id,
+        fromUser: fromUser!._id,
+        isExpiry: expire,
+        content: encrypt(sharedKey, messageContent.trim()),
+        time: expiryTime,
+        type: "MESSAGE"
+      });
+    }
+    
+  };
   const sendMessage = async () => {
     if (!friend) {
       await checkFriendShip();
@@ -230,24 +249,24 @@ const DmChatbox = (
     // }
   };
 
-  const createCallLog = async () => {
+  const createCallLog = async (callType:any) => {
     const id = await createCall({
       from: fromUser?._id!,
       to: toUser?._id!
     })
+    await sendMessageWithOutInput(`https://video-one-rust.vercel.app/video/page?username=${toUser?.name}&userID=${toUser?._id}&roomID=${id}`)
+    window.open(`https://video-one-rust.vercel.app/video/page?username=${toUser?.name}&userID=${toUser?._id}&roomID=${id}&callType=${callType}`, "_self")
+
     // navigation.navigate('DmCallPage', { fromId: fromId, name: fromUser?.name!, email: fromUser?.email!, toId: toId, callId: id })
     // router.push({ pathname: '/callDm', params: { fromId: fromUserId, name: fromUser?.name!, email: fromUser?.email!, toId: toUserId, callId: id } });
+  
   }
   const handleExpiry = async () => {
     setExpire(!expire)
   }
     return (
-        <View style={styles.containerbox}>
-        <View style={styles.mainbox}>
-        <ChatScreen/>
-        </View>
+      
         
-            <View style={styles.leftbox}>
                 
     <ImageBackground
       source={selectedTheme.backgroundImage}
@@ -315,13 +334,27 @@ const DmChatbox = (
             <TouchableOpacity style={{
               
             }} onPress={() => {
-              createCallLog();
+              createCallLog("video");
+
             }}>
               {/* <Image
               source={require('../assets/images/video_call.png')}
               style={styles.userImage}
             /> */}
               <FontAwesomeIcon style={{ color: 'white', fontSize: 20}} name="video-camera" />
+
+            </TouchableOpacity>
+            <TouchableOpacity style={{
+              
+            }} onPress={() => {
+              createCallLog("audio");
+
+            }}>
+              {/* <Image
+              source={require('../assets/images/video_call.png')}
+              style={styles.userImage}
+            /> */}
+              <FontAwesomeIcon style={{ color: 'white', fontSize: 20}} name="phone" />
 
             </TouchableOpacity>
 
@@ -423,8 +456,7 @@ const DmChatbox = (
         </View>
       </View>
                 </ImageBackground>
-            </View>
-            </View>
+          
   );
 };
 

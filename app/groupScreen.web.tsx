@@ -168,7 +168,9 @@ const GroupChatScreen = (
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>BloomChats</Text>
-        <TouchableOpacity onPress={()=>{ navigation.navigate('Profile',{email:email as string})
+        <TouchableOpacity onPress={()=>{ 
+          // navigation.navigate('Profile',{email:email as string})
+          router.push({ pathname: '/userProfile', params: { email: email as string } });
         }} >
           <Icon name="ellipsis-v" size={18} color="#fff"   />
         </TouchableOpacity>
@@ -203,7 +205,8 @@ const GroupChatScreen = (
       {/* Bottom Navbar */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={()=>{
-          navigation.navigate('Chat',{email:email as string})
+          // navigation.navigate('Chat',{email:email as string})
+          router.push({ pathname: '/chatScreen', params: { email } });
         }}>
           <Icon name="home" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Home</Text>
@@ -217,7 +220,8 @@ const GroupChatScreen = (
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={()=>{
-          navigation.navigate('BillSplit',{email:email as string})
+          // navigation.navigate('BillSplit',{email:email as string})
+          router.push({ pathname: '/billSplit', params: { email } });
         }}>
           <Icon name="money-bill-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Bill Split</Text>
