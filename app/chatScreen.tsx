@@ -559,11 +559,6 @@ const ChatScreen = (
           <Icon name="phone-alt" size={20} color="#bbb" />
           <Text style={styles.navIcons}>Calls</Text>
         </TouchableOpacity>
-
-      
-
-       
-
       </View>
     </View>
   );

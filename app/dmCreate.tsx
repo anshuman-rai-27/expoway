@@ -111,7 +111,7 @@ export default function GroupComponent(
       <StatusBar barStyle="light-content" />
       <TouchableOpacity onPress={()=>{
         // navigation.navigate('GroupCreate', {email:email as string})
-        router.push({ pathname: '/GroupCreate', params: {email:email as string} });
+        router.push({ pathname: '/groupCreate', params: {email:email as string} });
       }}>
         <Text style={styles.title}>+ Create Group</Text>
       </TouchableOpacity>
