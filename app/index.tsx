@@ -31,7 +31,6 @@ const Login = () => {
 
   async function directChat() {
     const localEmail = await AsyncStorage.getItem('email');
-    console.log(localEmail)
     
     if (localEmail) {
       setEmail(localEmail);
